@@ -67,13 +67,16 @@ s = '2+2=${2+2}'
 #CURSOR_ERROR: Требуется одна переменная, а не операнд 'b-1'
 
 {Типы переменных}
+const: VAR = 1
 bool : bVar = true | false
 int  : iVar = 1 | 2 | 3 | 4 | 5
 float: fVar = 1. | .3 | 5.2 | 3.14
 str  : sVar = 'string ${b+5} - $b'
+date : tVar = '2019-01-01' | '2019-01-01 10:00:00'
 list : lVar = [1, 2, 3 |, 4 | 6, 5]
 dict : dVar = {1: 3, 4: 1, 'd': , g}
 coll : cVar = (1, 2)
+db   : var = db{table1: [], table2: []}   # db:table1
 obj  : oVar = Object(attr)
 
 {bool - Булевая переменная}
@@ -319,3 +322,23 @@ class(int) [
 	
 value = 6.sqrt
 value.sqrt
+
+{работа со структурными объектами: str}
+
+{{Структура кода Di}}
+
+Базовые алгоритмы:
+# Развлетвления:
+if(): [:elsif(): :else: ]
+if:{условие1: , условие2: } [:else: ]
+when(a): {значение1: , значение2: } [:else: ]
+# Циклы:
+for(a->list): # конечный цикл
+while(bool):
+do: [:while():]
+# Многопоточность:
+strim():
+# Объявление
+int:
+
+Базовые функции:
