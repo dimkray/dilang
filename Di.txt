@@ -157,10 +157,10 @@ s:::-1 # реверсия
 #'gnirts'
 
 {Получить рандомное значение}
-int i = 1 \ 10 \ 2 - от одного до десяти с шагом 2
-float f = 1 \ 3 - от 1 до 3
-float f = \ 1 - от 0 до 1
-int i = 1 \ - от одного до максимального значения int
+int: i = 1 \ 10 \ 2 - от одного до десяти с шагом 2
+float: f = 1 \ 3 - от 1 до 3
+float: f = \ 1 - от 0 до 1
+int: i = 1 \ - от одного до максимального значения int
 
 {Указание подтипов}
 list(int) listing = [1, 3, 8]
@@ -190,9 +190,9 @@ range:1:5
 #'8' - '45.8':3
 
 {Преобразования}
-int a = 3
+int: a = 3
 #a=3
-str a = 7
+str: a = 7
 #a='7'
 float(a = 7)
 #CHANGE_TYPE_ERORR: Нельзя преобразовать int в str
@@ -201,12 +201,12 @@ a.float
 
 int dorr = 's'
 #1 - так как один символ
-int sett = [1,2,3,4,5]
+int: sett = [1,2,3,4,5]
 #5
-int json = {a: 1, b: 3}
+int: json = {a: 1, b: 3}
 #2
 a = 'new'
-dict new = {'big natural':1, a:1, b:()}
+dict: new = {'big natural':1, a:1, b:()}
 new:'big natural' = 2
 
 5.type
@@ -288,7 +288,7 @@ a = 1, 2, 3
 # c=null
 
 Короткое условие:
-a = b if(a == c) else c
+a = (a == c) ? b : c
 
 Условие:
 if(a == 0) 
@@ -299,7 +299,7 @@ else
 	str = 1
 
 Цикл:
-for(i -> lVar:a:b:2) 
+for(i -> lVar:a..b?2)
 	a += i
 
 Цикл по условию:
@@ -342,3 +342,84 @@ strim():
 int:
 
 Базовые функции:
+
+
+Пример кода:
+-------------------------------------------------------
+import: module{alias: addNewAlias}
+
+fun: add(enum(int): items) = sum(items)
+# fun add = sum(enum(int): @items)
+
+fun: del(int: first, int: last) = {
+        if(first - last < 0): return: 0; else: {return: first - last}
+        # return: (del = first - last) < 0 ? 0 : del
+        # (del = first - last) < 0 ? 0 : del
+    }
+
+enter:
+    print: 'start program'
+
+    int: a = input('parameter $(self.name): '),  # self.name = 'a'
+         b = input('parameter $(self.name): ')   # self.name = 'b'
+         # enum(int): a, b <=> input(enum: 'parameter $(self.name): ' * 2)
+
+    print: 'sum a = $a and b = $b: $(add(a, b))'
+    # print: 'sum a = $a and b = $b: ' + add(a, b)
+
+    print: 'del a - b = ' + del
+
+    str: text = inputs('input multitext:\n')
+
+    list(str): strings = text.strings
+    print: 'first string: "$(strings:)"'
+    print: 'last string: "$(strings:\1)"'
+    # print: 'last string: "$(text.strings:\1)"'
+
+exit:
+    print: 'exit program'
+
+-----------------------------------------------
+
+eNum = 1, 2, 3, int: a = 0, a = 5, b += 3, for(i -> 1..10): a++
+eNum += 1
+cLoo = (1, 4, 7)
+
+eList = [1, 2, 3, 4] == [1; 2; 3; 4]
+
+eList = [1, 2, 3; 4]
+eList: = enum: 1, 2, 3
+
+lList = [1; 2; 3;] <> [1, 2, 3, ]
+
+# создание новых операций
+operand(+): /+ = {
+    priority : 21;
+    list, dict, enum, coll :
+            for(item -> @first):
+                item += @second:
+    str :
+        @second + @first
+    }
+
+operand(-): /- = {
+    priority : 21;
+    list, dict, enum, coll :
+         for(item -> @first):
+             item -= @second:
+    str :
+     @second - @first
+    }
+
+# Создание целочисленного деления с округлением
+operand: // = {
+    priority : 20;
+    int, float :
+        # return:
+        round(@first.float / @second)
+    }
+
+c = (a = 45 // b = 23)
+c = 2
+c = (a = 45.1 // b = 23)
+c = 2.0

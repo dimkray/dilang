@@ -4,6 +4,8 @@
 Vars = {}
 # Группы переменных и значений
 Groups = []
+# Словарь значений
+Values = {}
 
 def getTypeByValue(value):
     if value is None:
@@ -25,6 +27,7 @@ def getTypeByValue(value):
     if type(value) == set:
         return 'coll'
 
+
 def setValueByType(value, typevar):
     if typevar == 'null':
         return None
@@ -40,15 +43,17 @@ def setValueByType(value, typevar):
     else:
         return Exception
 
+
 class Variable:
-    dVarSettings = {'value': None,    # значение
+    dVarSettings = {'name': None,     # имя переменной
+                    'value': None,    # значение
                     'type': None,     # тип: bool, integer, float, char, str, list, dict, coll, obj
                     'subtype': None,  # подтип для: list, dict, coll
                     'dec': False,     # declaration - признак объявления
                     'exp': False,     # явно заданный тип
                     'const': False    # признак константы
                     }
-    def __init__(self, value, typevar=None, subtype=None, declaration=False, explicit=False, const=False):
+    def __init__(self, name, value, typevar=None, subtype=None, declaration=False, explicit=False, const=False):
         if typevar == None:
             self.dVarSettings['type'] = getTypeByValue(value)
         else:
@@ -61,5 +66,6 @@ class Variable:
             self.dVarSettings['value'] = setValueByType(value, self.dVarSettings['type'])
         else:
             self.dVarSettings['value'] = value
+        Vars['_'+name] = self.dVarSettings
 
 #    def setType(self, typevar, subtype=None, declaration=False, explicit=False, const=False):
