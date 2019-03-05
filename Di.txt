@@ -12,6 +12,7 @@ a = 'set # 123'
 a #{Создаём переменную a}# = 1 # и присваиваем значение 1
 #a=1
 
+
 {a - Неопределённые переменные}
 b # объявление неопределённой переменной
 #b=null
@@ -22,6 +23,7 @@ a = b + 1
 b = true
 #b=true
 
+
 {a,b - Объявление групп переменных}
 a, b, c; d
 #[a=null, b=null, c=null, d=null]
@@ -31,7 +33,26 @@ a = 1, b = 2, c = 3
 a.group.sum
 #6
 
-{@ - Указатель значения переменной}
+
+{.hist: - вызов предыдущих значений переменной}
+a = 1
+a = 2
+a = 5
+a.hist # список исторических значений
+#[2,1]
+a.hist: # получить последнее значение
+
+
+{.del - удаление переменных}
+a = 1
+a.del # удаляет переменную и очищает память
+b = a + 1
+#ERROR_UNCKNOWN_VARIABLE: a
+a, b = 2
+del(a, b) # удаляет список переменных
+
+
+{@ - Указатель на значение переменной}
 b = 1
 #b=1
 a = @b + 1 # указатель на переменную
@@ -64,23 +85,77 @@ s = '2+2=${2+2}'
 'Значение: @{b} - указатель'
 #'Значение: 11 - указатель'
 'Значение: @{b-1} - указатель'
-#CURSOR_ERROR: Требуется одна переменная, а не операнд 'b-1'
+#ERROR_CURSOR: Требуется одна переменная, а не операнд 'b-1'
 
 {Типы переменных}
+unk  : # неопределённый тип переменных (может менять свой тип)
 const: VAR = 1
 bool : bVar = true | false
-int  : iVar = 1 | 2 | 3 | 4 | 5
-float: fVar = 1. | .3 | 5.2 | 3.14
+int  : iVar = 1 | 2 | 3 | 4 | 5 | 10 000
+float: fVar = 1. | .3 | 5.2 | 3.14 | 10000. | 10 000.00
 str  : sVar = 'string ${b+5} - $b'
 date : tVar = '2019-01-01' | '2019-01-01 10:00:00'
-list : lVar = [1, 2, 3 |, 4 | 6, 5]
+list : lVar = [1, 2, 3, 4, 6, 5]
 dict : dVar = {1: 3, 4: 1, 'd': , g}
 coll : cVar = (1, 2)
+enum : eVar = 1, 2, 3
+block: blockCode = {a, b = 2; a += 1; if(a>b): print: 1; else: print: 2;}
 db   : var = db{table1: [], table2: []}   # db:table1
 obj  : oVar = Object(attr)
 
+Автоопределение типа (по указанному значению):
+unk  : var = null
+bool : var = false
+int  : var = 1
+float: var = 10 000.00
+str  : var = 'string' или "string"
+date : var = '2019-01-01' или '2019-01-01 10:00:00'
+list : var = [1]
+dict : var = {1}
+coll : var = (1)
+enum : var = 1, 2
+block: var = {1;}
+
+Автоопределение типа (с пустым значением или значением null):
+unk  : var
+float: var = .
+str  : var = '' или ""
+list : var = []
+dict : var = {}
+coll : var = ()
+enum : var = ,
+block: var = {;}
+
+Создаваемые (возможные) типы (s - любое слово, 1 - любая цифра):
+new  : var = s{}
+new  : var = {}s
+new  : var = s{}s
+new  : var = s[]
+new  : var = []s
+new  : var = s[]s
+new  : var = 1{}
+new  : var = {}1
+new  : var = 1{}1
+new  : var = 1[]
+new  : var = []1
+new  : var = 1[]1
+new  : var = 1$
+new  : var = 1@
+new  : var = 1s
+new  : var = _1
+new  : var = 1_
+....
+
+{Переменные определённых типов}
+var : str, int = 1 # переменная может быть как str так и int
+var : int: 1..10 # переменная может быть int в значениях от 1 до 10
+var : int: 1...10 # переменная может быть int в значениях от 1 до 9
+var : str: format('[a..z]') # переменная str соотвествующего формата
+var : list(int: 0..100): 1..10
+
+
 {bool - Булевая переменная}
-bool b = true
+bool: b = true
 #b=true # bool, exp
 bBool = true # b<БУКВА>
 #bBool=true # bool, no exp
@@ -88,7 +163,7 @@ b=2
 #TYPE_ERROR: Неверный тип значения '2' для типа bool
 
 {int - Целочисленная переменная}
-int i = 1
+int: i = 1
 #i=1 # int, exp
 iInt = 1
 #iInt=1 # int, no exp
@@ -96,18 +171,18 @@ iInt = 1
 
 {list - Список}
 lVar = [1, 2, 3, 4-2, 5,]
-#lVar=[1,2,3,2,5,null]
+#lVar=[1, 2, 3, 2, 5, null]
 lVar:3 = 0
-#lVar=[1,2,3,0,5,null]
+#lVar=[1, 2, 3, 0, 5, null]
 lVar.len, lVar.max, lVar.min, lVar.sum
 
 {dict - Словарь}
-dict dDict = {1: 3, 4: 1, 'd': , t}
+dict: dDict = {1: 3, 4: 1, 'd': , t}
 #dDict={'1':3,'4':1,'d':null,'t':null}
 dDict:'d' = 5 | dDict:d = 5 | dDict.d = 5
 dVar = dDict
 dVar.len, dVar.max, dVar.min, dVar.sum, dVar.key, dVar.val
-dVar = {} # пустой словарь
+dVar = {} # пустой словарь = null
 dVar.d = 3
 # dVar={'d':3}
 d = 5
@@ -147,47 +222,59 @@ c.def
 
 {Работа со списочными переменными}
 str s = 'string'
-s: | s. # отображение первого элемента
+s: # отображение первого элемента
 #'s'
-def(s.)
-#0
-s::
+[1, 2, 3]:1
+#2
+{1: 34, 2: 45, 6: 11}:1
+#45
+(1, 2, 5, 9):3
+#9
+[]:1
+#null
+settings: error: ERROR_LIST
+[]:1
+#ERROR_LIST
+s:? # отображение всего списка (? - не указаны настройки)
 #'string'
-s:::-1 # реверсия
+
+{Реверсия списков}
+\s # реверсия
 #'gnirts'
 
+
 {Получить рандомное значение}
-int: i = 1 \ 10 \ 2 - от одного до десяти с шагом 2
-float: f = 1 \ 3 - от 1 до 3
-float: f = \ 1 - от 0 до 1
-int: i = 1 \ - от одного до максимального значения int
+int: i = rnd(1..10?2) # от одного до десяти с шагом 2
+float: f = rnd(1..3) # от 1 до 3
+float: f = rnd() или rnd  # от 0 до 1
+int: i = rnd(1..) - от одного до максимального значения int
+list: a.rnd - вернуть произвольный элемент списка
+list: a:rnd(..5) - вернуть произвольный элемент списка из первых 5
 
 {Указание подтипов}
-list(int) listing = [1, 3, 8]
-list(list(int)) asd = [[],[4,6,2],[11,2]]
+list(int, str): listing = [1, 3, 8]
+list(list(int)): asd = [[],[4,6,2],[11,2]]
 asd:3 = 1 # вызовет ошибку!
-list(int) estre = [1,2,3]
-estre:5 = 9
-# estre = [1,2,3,0,0,9]
+list(int): estre = [1,2,3]
 
-a = 3
-r = a \ 10
-:1
-#null - null:1
+{автодобавление элементов}
+estre:5 = 9
+# estre = [1, 2, 3, null, null, 9]
+
 a:
-#null - null:0
-:a
-#null - null:null = null:0
+#null - [null]:0
 1:
-#1 - 1:0
+#1 - [1]:0
 
 {Получить список}
-range:1:5
+1..5
+#[1,2,3,4,5]
+1...5
 #[1,2,3,4]
 
 {Сложные обращения}
-45.8.3.str
-#'8' - '45.8':3
+45.8.str
+#'45.8'
 
 {Преобразования}
 int: a = 3
@@ -199,8 +286,12 @@ float(a = 7)
 a.float
 #'7.0'
 
-int dorr = 's'
+int: dorr = 's'
 #1 - так как один символ
+int: dorr = 'string'
+#6 - так как шесть символов
+int: dorr = ' 15'
+#15 - так как int(' 15') = 15
 int: sett = [1,2,3,4,5]
 #5
 int: json = {a: 1, b: 3}
@@ -442,7 +533,7 @@ class: person = {
         list: @contacts
 
     private:
-        fun: uppName(name :: str(1..100)) = {
+        fun: uppName(name: str(1..100)) = {
             name:.upper!
             name:[1..].lower! }
 
@@ -451,12 +542,12 @@ class: person = {
     on_error:
             if(exception == ERROR_FORMAT_ATTRIBUTE):
                 print: 'Неверный формат для сохранения данных:' & exception.message;
-    method: add_phone(values :: str, enum(str), list(str), coll(str)) = {
+    method: add_phone(values: str, enum(str), list(str), coll(str)) = {
         for(value -> values):
             contacts += {'typeof': 'phone', 'contact': value}; };
-    method: add_mail(value :: str: format('[a..Z,0..1,.]@[a..Z,0..1].[a..Z]')) = {
+    method: add_mail(value: str: format('[a..Z,0..1,.]@[a..Z,0..1].[a..Z]')) = {
         contacts += {'typeof': 'email', 'contact': value}; }
-    method: add_site(value :: str: format('[a..Z,0..1,.,/]')) = {
+    method: add_site(value: str: format('[a..Z,0..1,.,/]')) = {
         contacts += {'typeof': 'site', 'contact': value}; }
     method: print_contacts = {
         print: 'Контактные данные:';

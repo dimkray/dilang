@@ -52,6 +52,8 @@ def stringProcess(code: str):
 
 
 def spaceProcess(code: str):
+    clearCode = ''
+    #while
     code = code.replace('\n', ';')  # заменить все ENTER
     # code = re.sub(r'\s+', '', code, flags=re.UNICODE)  # удалить все пробелы
     code = ''.join(code.split())
@@ -71,8 +73,8 @@ def commentProcess(code: str):
 
 
 def clearProcess(code: str):
-    clearCode = commentProcess(code)
-    clearCode = stringProcess(clearCode)
+    clearCode = stringProcess(code)
+    clearCode = commentProcess(clearCode)
     clearCode = variableProcess(clearCode)
     clearCode = spaceProcess(clearCode)
     return clearCode
