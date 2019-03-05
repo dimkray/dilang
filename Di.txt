@@ -423,3 +423,72 @@ c = (a = 45 // b = 23)
 c = 2
 c = (a = 45.1 // b = 23)
 c = 2.0
+
+------------------------------------------------
+# Быстрое создание класса объектов
+class: man = {int: @age = 18, str: @name = 'Noname'}
+
+class: person = {
+    str:
+        @first, @middle, @last,
+        first_name = uppName(first),
+        middle_name = uppName(middle),
+        last_name = uppName(middle);
+    @age :: int: 0..150;
+    @sex :: const:
+        MAN = 'мужской',
+        WOMAN = 'женский';
+    get: # только получение
+        list: @contacts
+
+    private:
+        fun: uppName(name :: str(1..100)) = {
+            name:.upper!
+            name:[1..].lower! }
+
+    method: full_name = last_name & first_name & middle_name
+    method: inicials = last_name & first_name: + '.' & middle_name: + '.'
+    on_error:
+            if(exception == ERROR_FORMAT_ATTRIBUTE):
+                print: 'Неверный формат для сохранения данных:' & exception.message;
+    method: add_phone(values :: str, enum(str), list(str), coll(str)) = {
+        for(value -> values):
+            contacts += {'typeof': 'phone', 'contact': value}; };
+    method: add_mail(value :: str: format('[a..Z,0..1,.]@[a..Z,0..1].[a..Z]')) = {
+        contacts += {'typeof': 'email', 'contact': value}; }
+    method: add_site(value :: str: format('[a..Z,0..1,.,/]')) = {
+        contacts += {'typeof': 'site', 'contact': value}; }
+    method: print_contacts = {
+        print: 'Контактные данные:';
+        for (contact -> contacts): print: '\n - $(contact.typeof): $(contact.contact)'}
+    method: print_info = {
+        print: 'ФИО: $(self.fullname)\nПол: $(sex)\nВозраст: $(age)\n' + self.print_contacts; }
+}
+
+dima = person('Дмитрий', 'Анатольевич', 'Поварницын', age=37, sex=MAN)
+with(dima):
+    print: .full_name & '-' & .inicials,
+    .add_mail('dimkray@mail.ru'),
+    .add_phone('+7-911-96-65-111','222-333-44'),
+    .add_site('vk.com/dimkray'),
+    print: .print_contacts;
+
+
+Проверка синтаксиса
+------------------------------------------------------------------------
+dima = person('Дмитрий', 'Анатольевич', 'Поварницын', age=37, sex=MAN)
+with(dima):
+    print: .full_name & '-' & .inicials,
+    .add_mail('dimkray@mail.ru'),
+    .add_phone('+7-911-96-65-111','222-333-44'),
+    .add_site('vk.com/dimkray'),
+    print: .print_contacts;
+------------------------------------------------------------------------
+[var:dima][:=][fun:person(]
+                [val:0],[val:1],[val:2],[[val:age][:=][val:3]],[[val:sex]=[val:MAN]]
+[basic:with(]
+    [var:dima]
+        [#print:]
+            [var:dima]             [oper:&][val:4][oper:&][var:dima]
+                [method:full_name]                            [method:inicials],
+    ...
