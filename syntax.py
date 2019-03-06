@@ -75,6 +75,15 @@ class ItemOperand:
         #self.sType = sTyp
 
 
+def findChar(char: str, code: str, mLevel, iLevel=0):
+    positions = []
+    iPos = 0
+    for iChar in code:
+        if iChar == char and mLevel == iLevel:
+            positions.append(iPos)
+        iPos += 1
+    return positions
+
 def checkAreas(code: str):
     def addLevel(level, value):
         if level >= len(mType):
@@ -126,18 +135,32 @@ def checkAreas(code: str):
     print(sLevel)
     return mLevel
 
+
 def separate(code: str, mLevel, iLevel, sSep = ';'):
     startPos = position = 0
     mItems = []
+    mItemLevels = []
     for char in code:
         if char == sSep and mLevel[position] == iLevel:
             mItems.append(code[startPos:position])
+            mItemLevels.append(mLevel[startPos:position])
             startPos = position + 1
         position += 1
     mItems.append(code[startPos:])
+    mItemLevels.append(mLevel[startPos:])
+    return mItems, mItemLevels
 
 
-#def createSyntax(code: str):
+def createSyntax(code: str):
+    mLevel = checkAreas(code)
+    # Level 0
+    mItem, mItemLevel = separate(code, mLevel, 0)
+    iItem = 0
+    for item in mItem:
+        mPos = findChar('=', item, mItemLevel, 0)
+        if len(mPos) > 1:
+            print('ERROR_SINTAX: it is more then one symbol "=" on position ' + mPos[1])
+
 
 
 st = " ();([(){}()]); int: [dima, [dim2]] = 500 * {[],[],[[(323;6)]], (6)} - 7*(5+9 - (854/2))"
