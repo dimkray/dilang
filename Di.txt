@@ -638,13 +638,13 @@ symple basic:
 emun = [item,item,item,..]
 item:
     [typ: [item,item,item,..]], [typ([enum]): [item,item,item,..]]
-item (последнего уровня):
+itemOperand (последнего уровня):
     - создание / изменение
     [[var [: [item, item, item, ...]]] = [oper & oper & oper & ..]],
     [[var [: [item, item, item, ...]]] = [oper & oper & oper & ..] ? [oper & oper & oper & ..] : [oper & oper & oper & ..]
 oper:
     [@][oper][@]:
-    [obj], [obj:*[?*]], [obj.], [fun], [block], [item], [(oper & oper & oper & ..)]
+    [obj], [obj:*[?*]], [obj.], [fun], [block], [(oper & oper & oper & ..)]
 & (operand):
     [+], [-], [>], ...
 @ (special):
