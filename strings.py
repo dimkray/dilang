@@ -63,3 +63,20 @@ def checkChar(code: str, position: int, strList: str):
         if char == sChar:
             return True
     return False
+
+
+# Получение отдельных слов из строки и получение конструкции строки
+def words(text: str):
+    import re
+    try:
+        if text.strip() == '': return []
+        words = re.split('\s|/|\\|\*|"|`|<|>|\]|\[|\}|\{|=|\+|\)|\(|&|\^|#|\~|@|»|«|:|;|,|\.|!|\?|-', text)
+        mWords = [] # массив слов
+        for word in words:
+            s = word.strip()
+            if s != '' and s != '-' and s != '—':
+                mWords.append(s)
+        return mWords  # возвращаем отдельные слова
+    except Exception as e:
+        print('ERROR_CODE: strings.words - ', str(e))
+        return []

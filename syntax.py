@@ -84,6 +84,7 @@ def findChar(char: str, code: str, mLevel, iLevel=0):
         iPos += 1
     return positions
 
+
 def checkAreas(code: str):
     def addLevel(level, value):
         if level >= len(mType):
@@ -100,7 +101,6 @@ def checkAreas(code: str):
         if char == '(':
             iLevel += 1
             addLevel(iLevel, 1)
-            #mType[iLevel] = 1
         elif char == ')':
             if mType[iLevel] != 1:
                 print('ERROR_AREA_END: ) on position ' + str(position+1))
@@ -109,7 +109,6 @@ def checkAreas(code: str):
         elif char == '[':
             iLevel += 1
             addLevel(iLevel, 2)
-            #mType[iLevel] = 2
         elif char == ']':
             if mType[iLevel] != 2:
                 print('ERROR_AREA_END: ] on position ' + str(position+1))
@@ -118,7 +117,6 @@ def checkAreas(code: str):
         elif char == '{':
             iLevel += 1
             addLevel(iLevel, 3)
-            #mType[iLevel] = 3
         elif char == '}':
             if mType[iLevel] != 3:
                 print('ERROR_AREA_END: } on position ' + str(position+1))
@@ -151,22 +149,56 @@ def separate(code: str, mLevel, iLevel, sSep = ';'):
     return mItems, mItemLevels
 
 
+def findProgramWord(name: str, pType = 'proc'):
+    from constants import basicWords, keyWords
+    for key in basicWords:  # ищем в ключевых словах [process]
+        if key == name:
+            if basicWords[key][pType]:
+                return True
+    for key in keyWords:  # ищем во второстепенных словах [process]
+        if key == name:
+            if keyWords[key][pType]:
+                return True
+    return False
+
+
 def createSyntax(code: str):
+    from strings import words
     mLevel = checkAreas(code)
     # Level 0
-    mItem, mItemLevel = separate(code, mLevel, 0)
+    mItem, mItemLevel = separate(code, mLevel, 0, ';')
     iItem = 0
     for item in mItem:
-        mPos = findChar('=', item, mItemLevel, 0)
-        if len(mPos) > 1:
-            print('ERROR_SINTAX: it is more then one symbol "=" on position ' + mPos[1])
+        mPos = findChar(': ', item, mItemLevel, 0)
+        if len(mPos) == 1:  # constr: {xx: x [, y, z]}
+            kWord = words(item[:mPos[0]])[0]
+            if findProgramWord(kWord) == False:
+                print('ERROR_KEYWORD: unknown keyword "%s" for process' % kWord)
+                return False
+            nItem = Item('basic', kWord)
+        elif len(mPos) > 1:  # constr: {xx: yy: zz: x [, y, z]}
+            pass
+        else: # constr: {[xx] x ...}
+            pass
+        mPos = findChar(',', item, mItemLevel, 0)
+        if len(mPos) > 0: # constr: { [xx:] x,x,x }
+            mSubItem, mSubItemLevel = separate(item, mItemLevel, 0, ',')
+            print(mSubItem)
+        # mPos = findChar('=', item, mItemLevel, 0)
+        # if len(mPos) > 1:
+        #     print('ERROR_SINTAX: it is more then one symbol "=" in string "%s"' % item)
 
-
+        return False
 
 st = " ();([(){}()]); int: [dima, [dim2]] = 500 * {[],[],[[(323;6)]], (6)} - 7*(5+9 - (854/2))"
+st2 = " var: int: dima = 500, kas = 10, les = 15, str: djs = _34, "
 print(st)
 mLev = checkAreas(st)
 print(separate(st, mLev, 0))
+
+print(st2)
+createSyntax(st2)
+print(separate(st, mLev, 0, ','))
 
 # itm = Item('basic', 'code', mItems=[ItemOperand(mVars=[])])
 # Syntons.append()

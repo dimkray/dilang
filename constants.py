@@ -75,9 +75,7 @@ basicWords = {'function':  {'type': 'basic', 'main': [], 'in': [], 'proc': True,
               'default':    {'type': 'program', 'main': [], 'in': [], 'proc': False, 'fun': True, 'method': True},
               'import':     {'type': 'program', 'main': [], 'in': [], 'proc': True, 'fun': True, 'method': False},
               'with':       {'type': 'basic', 'main': [], 'in': [], 'proc': True, 'fun': False, 'method': False},
-              'round':      {'type': 'valuation', 'main': [], 'in': [], 'proc': True, 'fun': True, 'method': True},
-
- }
+              'round':      {'type': 'valuation', 'main': [], 'in': [], 'proc': True, 'fun': True, 'method': True} }
 keyWords = {'code': {'type': 'basic', 'basic': None, 'proc': True, 'fun': False, 'method': False},
             'fun': {'type': 'basic', 'basic': 'function', 'proc': True, 'fun': False, 'method': False},
             'cls': {'type': 'basic', 'basic': 'class', 'proc': True, 'fun': False, 'method': False},
@@ -128,8 +126,7 @@ keyWords = {'code': {'type': 'basic', 'basic': None, 'proc': True, 'fun': False,
             'pass': {'type': 'action', 'basic': None, 'proc': True, 'fun': False, 'method': False},
             'max': {'type': 'math', 'basic': None, 'proc': True, 'fun': True, 'method': True},
             'min': {'type': 'math', 'basic': None, 'proc': True, 'fun': True, 'method': True},
-            'sum': {'type': 'math', 'basic': None, 'proc': True, 'fun': True, 'method': True},
-            }
+            'sum': {'type': 'math', 'basic': None, 'proc': True, 'fun': True, 'method': True}  }
 
 basicValue = {'true', 'false', 'null', 'infinity'}
 
